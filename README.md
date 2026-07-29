@@ -9,8 +9,8 @@ emotional tone.
 
 ## Screenshots
 
-![Dashboard](drag-dashboard-screenshot-here.png)
-![Search results](drag-results-screenshot-here.png)
+![Dashboard](dashboard.png)
+![Search results](search_results.png)
 
 ## How it works
 
@@ -37,20 +37,3 @@ ChromaDB (vector store), Gradio, Pandas, PyTorch (via Hugging Face inference)
 
 ```bash
 pip install pandas numpy python-dotenv langchain langchain-community gradio chromadb sentence-transformers
-```
-
-Run the notebooks in order (Data-Exploration → text-classification →
-sentiment-analysis → vector-search) to regenerate the processed CSV/text
-files, then launch the app:
-
-```bash
-python gradio-dashboard.py
-```
-
-## Notes
-
-- The `chroma_books/` vector database folder is regenerated automatically on
-  first run and is excluded from version control (see `.gitignore`).
-- No API keys are required for the core recommendation pipeline (Hugging
-  Face embeddings run locally); if you extend this with an LLM-based
-  re-ranking step, add your key to a local `.env` file (never commit it).
