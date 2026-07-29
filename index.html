@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nabu — ReactBits Ultra Design</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+                        dark: { base: '#030712', card: '#0B0F17' }
+                    },
+                    animation: {
+                        'aurora': 'aurora 15s ease infinite alternate',
+                        'glow-pulse': 'glowPulse 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        aurora: {
+                            '0%': { transform: 'translate(0, 0) scale(1)' },
+                            '50%': { transform: 'translate(8%, -8%) scale(1.08)' },
+                            '100%': { transform: 'translate(-8%, 8%) scale(0.95)' }
+                        },
+                        glowPulse: {
+                            '0%': { opacity: '0.3', filter: 'blur(100px)' },
+                            '100%': { opacity: '0.6', filter: 'blur(130px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- React & Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(11, 15, 23, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.15);
+        }
+        .aurora-bg {
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .aurora-1 { top: -200px; right: -150px; background: radial-gradient(circle, rgba(16,185,129,0.3) 0%, rgba(3,7,18,0) 70%); }
+        .aurora-2 { top: 30%; left: -200px; background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(3,7,18,0) 70%); }
+        .aurora-3 { bottom: -150px; right: 25%; background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, rgba(3,7,18,0) 70%); }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-emerald-500 selection:text-black">
+
+    <!-- ReactBits Aurora Mesh Lights -->
+    <div class="aurora-bg aurora-1 animate-aurora animate-glow-pulse"></div>
+    <div class="aurora-bg aurora-2 animate-aurora animate-glow-pulse" style="animation-delay: -4s;"></div>
+    <div class="aurora-bg aurora-3 animate-aurora animate-glow-pulse" style="animation-delay: -8s;"></div>
+
+    <div id="root" class="relative z-10"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const MOCK_BOOKS = [
+            {
+                id: 1,
+                title: "سبيينز: تاريخ مختصر للنوع البشري",
+                author: "يوڤال نوح هراري",
+                category: "تاريخ وفلسفة",
+                tone: "Surprising",
+                match: 98,
+                rating: 4.9,
+                stores: 14,
+                price: 25000,
+                cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1703329310i/23692271.jpg",
+                synopsis: "رحلة شيقة عبر التاريخ البشري من العصر الحجري حتى العصر الرقمي واستشراف المستقبل."
+            },
+            {
+                id: 2,
+                title: "التفكير السريع والبطيء",
+                author: "دانيال كانمان",
+                category: "علم نفس",
+                tone: "Happy",
+                match: 95,
+                rating: 4.8,
+                stores: 18,
+                price: 22000,
+                cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1317793965i/11468377.jpg",
+                synopsis: "يجسد هذا الكتاب تحليلاً عميقاً للنظامين اللذين يحكمان طريقة تفكيرنا واتخاذنا للقرارات."
+            },
+            {
+                id: 3,
+                title: "العادات الذرية",
+                author: "جيمس كلير",
+                category: "تطوير الذات",
+                tone: "Happy",
+                match: 97,
+                rating: 4.9,
+                stores: 22,
+                price: 18000,
+                cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1535115320i/40121378.jpg",
+                synopsis: "دليل عملي مثبت لبناء العادات الحسنة والتخلص من العادات السيئة عبر تغييرات بسيطة."
+            }
+        ];
+
+        function App() {
+            const [query, setQuery] = useState("");
+            const [books, setBooks] = useState(MOCK_BOOKS);
+            const [selectedBook, setSelectedBook] = useState(null);
+
+            useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [books, selectedBook]);
+
+            return (
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <!-- Header -->
+                    <header class="flex items-center justify-between py-4 border-b border-gray-800/80 mb-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 bg-gradient-to-br from-emerald-500/20 to-black border border-emerald-500/40 rounded-xl flex items-center justify-center p-2">
+                                <svg width="28" height="28" viewBox="0 0 100 100" fill="#10B981">
+                                    <rect x="30" y="15" width="40" height="24" rx="3" />
+                                    <rect x="25" y="41" width="50" height="6" rx="1" />
+                                    <path d="M 25 48 C 10 48 10 70 25 70 C 32 70 36 62 36 55 Z" />
+                                    <path d="M 36 48 H 70 L 62 58 L 56 90 L 40 62 Z" />
+                                </svg>
+                            </div>
+                            <span class="text-2xl font-black text-white">
+                                نبو <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">ReactBits v2.0</span>
+                            </span>
+                        </div>
+                    </header>
+
+                    <!-- Hero Section -->
+                    <div class="text-center max-w-3xl mx-auto my-12">
+                        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
+                            اكتشف الكتب التي <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">تخاطب روحك</span>
+                        </h1>
+                        <p class="text-gray-400 text-base sm:text-lg">محرك توصيات الذكاء الاصطناعي الفائق للكتب المتاحة في العراق والعالم العربي.</p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="glass-card p-4 sm:p-6 rounded-2xl mb-12 shadow-2xl">
+                        <div class="flex gap-4">
+                            <input 
+                                type="text" 
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="صف شعورك أو حبكة القصة التي تبحث عنها..." 
+                                class="w-full px-4 py-3.5 bg-gray-950/90 border border-gray-800 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500"
+                            />
+                            <button class="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-extrabold rounded-xl text-sm transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)]">
+                                بحث
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Books Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {books.map((book) => (
+                            <div 
+                                key={book.id} 
+                                class="glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col cursor-pointer"
+                                onClick={() => setSelectedBook(book)}
+                            >
+                                <div class="relative h-64 bg-gray-950 flex items-center justify-center p-4">
+                                    <img src={book.cover} class="h-full object-contain rounded-lg shadow-2xl" />
+                                    <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-gray-950/85 border border-emerald-500/50 text-emerald-400 text-xs font-black">
+                                        ✨ {book.match}% تطابق
+                                    </div>
+                                </div>
+                                <div class="p-5 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h4 class="text-base font-bold text-white">{book.title}</h4>
+                                        <p class="text-xs text-gray-400 mt-1">{book.author}</p>
+                                    </div>
+                                    <div class="mt-6 pt-4 border-t border-gray-800/80 flex items-center justify-between">
+                                        <div class="text-sm font-extrabold text-emerald-400">{book.price.toLocaleString()} د.ع</div>
+                                        <span class="text-xs text-gray-400">التفاصيل ←</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
